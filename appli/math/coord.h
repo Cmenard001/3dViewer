@@ -1,5 +1,5 @@
-#ifndef __COORS_H__
-#define __COORS_H__
+#ifndef __COORD_H__
+#define __COORD_H__
 
 
 typedef int16_t coord_t;
