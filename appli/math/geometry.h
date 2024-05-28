@@ -2,7 +2,7 @@
 #define __GEOMETRY_H__
 
 #include <stdint.h>
-#include "coors.h"
+#include "coord.h"
 
 typedef struct
 {
