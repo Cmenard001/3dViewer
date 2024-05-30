@@ -44,3 +44,31 @@ inline dist_t sin_int(angle_t angle)
 {
     return cos_int(angle - PI_INT/2);
 }
+
+inline dist_t tan_int(angle_t angle)
+{
+    return sin_int(angle)/cos_int(angle);
+}
+
+
+inline angle_t acos_int(dist_t dist)
+{
+    // On cherche l'index du cosinus le plus proche de la distance demandée
+    for (uint32_t cos_tab_index=0 ; cos_tab_index < NB_COS ; cos_tab_index++)
+    {
+        if (cos_tab[cos_tab_index] > dist)
+        {
+            return COSINDEX_TO_ANGLE(cos_tab_index);
+        }
+    }
+}
+
+inline angle_t asin_int(dist_t dist)
+{
+    return (PI_INT/2 - acos_int(dist));
+}
+
+inline angle_t atan_int(dist_t dist)
+{
+    return asin_int(dist/sqrt(dist*dist + 1));
+}
