@@ -2,20 +2,20 @@
 #define __GEOMETRY_H__
 
 #include <stdint.h>
-#include "coord.h"
+#include "geometry_unity.h.h"
 
 typedef struct
 {
-    coord_t x;
-    coord_t y;
+    dist_t x;
+    dist_t y;
 } point_two_dims_t;
 
 
 typedef struct
 {
-    coord_t x;
-    coord_t y;
-    coord_t z;
+    dist_t x;
+    dist_t y;
+    dist_t z;
 } point_three_dims_t;
 
 typedef struct

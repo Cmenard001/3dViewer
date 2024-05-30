@@ -1,8 +1,9 @@
-#ifndef __COORD_H__
-#define __COORD_H__
+#ifndef __GEOMETRY_UNITY_H__
+#define __GEOMETRY_UNITY_H__
 
+#include <stdint.h>
 
-typedef int16_t coord_t;
+typedef int16_t dist_t;
 typedef uint16_t angle_t;
 
 /**
@@ -12,9 +13,9 @@ typedef uint16_t angle_t;
  * En dehors de la plage, on a un overflow donc ça fait un modulo
  *
  */
-#define PI_INT ((1<<sizeof(angle_t))/2);
+#define PI_INT ((1<<sizeof(angle_t))/2)
 
-#define QUANTUM 1000
+#define QUANTUM 100
 
 
 #endif
