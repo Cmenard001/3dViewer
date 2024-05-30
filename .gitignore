@@ -1,6 +1,13 @@
 
 # Debug folder
-**/Debug/**
+Debug/**
+
+# Cubeide project files
+.settings/**
+
+# VScode configuration files
+.vscode/c_cpp_properties.json
+.vscode/settings.json
 
 # Prerequisites
 *.d
