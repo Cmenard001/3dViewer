@@ -12,6 +12,7 @@
 #include "stm32f1_gpio.h"
 #include "macro_types.h"
 #include "systick.h"
+#include "./math/trigo.h"
 
 void writeLED(bool_e b)
 {
@@ -53,6 +54,9 @@ int main(void)
 
 	//On ajoute la fonction process_ms à la liste des fonctions appelées automatiquement chaque ms par la routine d'interruption du périphérique SYSTICK
 	Systick_add_callback_function(&process_ms);
+
+	// Initialisation du tableau de cosinus
+	trigo_init();
 
 	while(1)	//boucle de tâche de fond
 	{
