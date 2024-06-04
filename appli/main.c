@@ -13,6 +13,8 @@
 #include "macro_types.h"
 #include "systick.h"
 #include "./math/trigo.h"
+#include "./math/math_high_level.h"
+#include "./math/geometry_unity.h"
 
 void writeLED(bool_e b)
 {
@@ -58,12 +60,16 @@ int main(void)
 	// Initialisation du tableau de cosinus
 	trigo_init();
 
+	// Initialisation de la high level math
+	math_init();
+
 	while(1)	//boucle de tâche de fond
 	{
 		if(!t)
 		{
 			t = 200;
 			HAL_GPIO_TogglePin(LED_GREEN_GPIO, LED_GREEN_PIN);
+			math_process_main();
 		}
 	}
 }

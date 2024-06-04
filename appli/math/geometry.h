@@ -10,7 +10,6 @@ typedef struct
     dist_t y;
 } point_two_dims_t;
 
-
 typedef struct
 {
     dist_t x;
@@ -20,16 +19,34 @@ typedef struct
 
 typedef struct
 {
-    point_two_dims_t origin_point;
-    angle_t origin_angle;
-} frame_two_dims_t;
-
+    angle_t angle_x;
+    angle_t angle_y;
+    angle_t angle_z;
+} angle_three_dims_t;
 
 typedef struct
 {
-    point_three_dims_t origin_point;
-    angle_t origin_alpha;
-    angle_t origin_beta_angle;
-} frame_three_dims_t;
+    point_two_dims_t p1;
+    point_two_dims_t p2;
+} segment_two_dims_t;
+
+typedef struct
+{
+    point_three_dims_t p1;
+    point_three_dims_t p2;
+} segment_three_dims_t;
+
+typedef struct
+{
+    segment_three_dims_t *segment;
+    uint16_t nb_segment;
+} drawing_three_dims_t;
+
+typedef struct
+{
+    segment_two_dims_t *segment;
+    uint16_t nb_segment;
+} drawing_two_dims_t;
+
 
 #endif
