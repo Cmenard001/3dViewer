@@ -1,8 +1,10 @@
 #include "drawing.h"
 
+#include <stddef.h>
+
 #include "geometry.h"
 
-static drawing_three_dims_t cube =
+const drawing_three_dims_t cube =
 {
     .segment = (segment_three_dims_t[])
     {
@@ -60,8 +62,37 @@ static drawing_three_dims_t cube =
     .nb_segment = 12
 };
 
-
-drawing_three_dims_t *get_drawing()
+const drawing_three_dims_t house =
 {
-    return &cube;
+    .segment = (segment_three_dims_t[])
+    {
+
+    },
+    .nb_segment = 0
+};
+
+static drawing_type_t current_drawing = 0;
+
+void increment_current_drawing()
+{
+    current_drawing = (current_drawing + 1) % DRAWING_COUNT;
+}
+
+drawing_three_dims_t *get_drawing(drawing_type_t drawing_type)
+{
+    switch(drawing_type)
+    {
+        case DRAWING_CUBE:
+            return &cube;
+        case DRAWING_HOUSE:
+            return &house;
+        default:
+            return NULL;
+    }
+    return NULL;
+}
+
+drawing_three_dims_t *get_current_drawing()
+{
+    return get_drawing(current_drawing);
 }

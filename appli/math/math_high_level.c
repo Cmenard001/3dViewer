@@ -23,15 +23,24 @@ void math_init()
 void math_process_main()
 {
     // on récupère le dessin à dessiner
-    drawing_three_dims_t *drawing;
-    drawing = get_drawing(&drawing);
+    drawing_three_dims_t *original_drawing;
+    original_drawing = get_current_drawing();
+
+    // on en fait une copie
+    drawing_three_dims_t drawing;
+    drawing.nb_segment = original_drawing->nb_segment;
+    drawing.segment = malloc(drawing.nb_segment * sizeof(segment_three_dims_t));
+    for (uint16_t i = 0; i < drawing.nb_segment; i++)
+    {
+        drawing.segment[i] = original_drawing->segment[i];
+    }
 
     // on recupère l'orientation dans laquelle on doit mettre le dessin
     polar_coord_three_dims_t polar_coord_three_dims;
     get_polar_coord(&polar_coord_three_dims);
-    angle_three_dims_t angle = (angle_three_dims_t){.angle_x = polar_coord_three_dims.alpha,
-                                                    .angle_y = polar_coord_three_dims.beta,
-                                                    .angle_z = 0 };
+    angle_three_dims_t angle = (angle_three_dims_t){.angle_x = (polar_coord_three_dims.beta),
+                                                    .angle_y = (polar_coord_three_dims.alpha),
+                                                    .angle_z = 0};
 
     // on affiche les angles obtenus
     char str[25];
@@ -48,11 +57,11 @@ void math_process_main()
         first_turn = false;
         last_angle = angle;
         // on tourne le dessin dans l'orientation souhaitée
-        rotate(drawing, angle);
+        rotate(&drawing, angle);
 
         // on projette le dessin sur un plan
         drawing_two_dims_t *drawing_2d;
-        drawing_2d = projection_orthogonal(drawing);
+        drawing_2d = projection_orthogonal(&drawing);
 
         // on redimensionne le dessin pour qu'il apparaisse à la bonne taille et à la bonne place
         resize_drawing(drawing_2d, ILI9341_WIDTH);
@@ -63,4 +72,5 @@ void math_process_main()
         // on libère la mémoire
         free(drawing_2d->segment);
     }
+    free(drawing.segment);
 }

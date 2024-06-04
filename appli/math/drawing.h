@@ -3,12 +3,31 @@
 
 #include "geometry.h"
 
+typedef enum
+{
+    DRAWING_CUBE,
+    DRAWING_HOUSE,
+    DRAWING_COUNT
+} drawing_type_t;
+
 /**
  * @brief Get a drawing object
  *
- * @param drawing
+ * @param drawing_type drawing you want to get
  */
-drawing_three_dims_t *get_drawing();
+drawing_three_dims_t *get_drawing(drawing_type_t drawing_type);
 
+/**
+ * @brief Increment the current drawing object
+ *
+ */
+void increment_current_drawing();
+
+/**
+ * @brief Get the current drawing object
+ *
+ * @param drawing_type drawing you want to get
+ */
+drawing_three_dims_t *get_current_drawing();
 
 #endif
