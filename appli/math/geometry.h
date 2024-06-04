@@ -49,4 +49,12 @@ typedef struct
 } drawing_two_dims_t;
 
 
+
+typedef struct
+{
+    angle_t alpha;
+    angle_t beta;
+} polar_coord_three_dims_t;
+
+
 #endif
