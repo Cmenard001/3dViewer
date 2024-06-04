@@ -2,6 +2,7 @@
 #define __DRAWING_H__
 
 #include "geometry.h"
+#include <stdbool.h>
 
 typedef enum
 {
@@ -9,6 +10,8 @@ typedef enum
     DRAWING_HOUSE,
     DRAWING_COUNT
 } drawing_type_t;
+
+bool is_drawing_changed();
 
 /**
  * @brief Get a drawing object

@@ -23,8 +23,12 @@ void math_init()
 void math_process_main()
 {
     // on récupère le dessin à dessiner
-    drawing_three_dims_t *original_drawing;
-    original_drawing = get_current_drawing();
+    static drawing_three_dims_t *original_drawing;
+    bool drawing_changed = is_drawing_changed();
+    if (drawing_changed)
+    {
+        original_drawing = get_current_drawing();
+    }
 
     // on en fait une copie
     drawing_three_dims_t drawing;
@@ -52,6 +56,7 @@ void math_process_main()
     if (   last_angle.angle_x != angle.angle_x
         || last_angle.angle_y != angle.angle_y
         || last_angle.angle_z != angle.angle_z
+        || drawing_changed
         || first_turn)
     {
         first_turn = false;
