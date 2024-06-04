@@ -15,6 +15,7 @@
 #include "./math/trigo.h"
 #include "./math/math_high_level.h"
 #include "./math/geometry_unity.h"
+#include "ihm/viewer.h"
 
 void writeLED(bool_e b)
 {
@@ -60,6 +61,9 @@ int main(void)
 	// Initialisation du tableau de cosinus
 	trigo_init();
 
+	// Initialisation des boutons
+	button_init();
+
 	// Initialisation de la high level math
 	math_init();
 
@@ -69,6 +73,7 @@ int main(void)
 		{
 			t = 200;
 			HAL_GPIO_TogglePin(LED_GREEN_GPIO, LED_GREEN_PIN);
+			viewer_process_main();
 			math_process_main();
 		}
 	}
