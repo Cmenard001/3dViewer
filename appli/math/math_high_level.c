@@ -42,14 +42,14 @@ void math_process_main()
     // on recupère l'orientation dans laquelle on doit mettre le dessin
     polar_coord_three_dims_t polar_coord_three_dims;
     get_polar_coord(&polar_coord_three_dims);
-    angle_three_dims_t angle = (angle_three_dims_t){.angle_x = (polar_coord_three_dims.beta),
-                                                    .angle_y = (polar_coord_three_dims.alpha),
-                                                    .angle_z = 0};
+    angle_three_dims_t angle = (angle_three_dims_t){.angle_x = 0,
+                                                    .angle_y = (polar_coord_three_dims.beta),
+                                                    .angle_z = (polar_coord_three_dims.alpha)};
 
     // on affiche les angles obtenus
     char str[25];
-    sprintf(str, "%d - %d            ", angle.angle_x, angle.angle_y);
-    ILI9341_Puts(1, 1, str, &Font_7x10, ILI9341_COLOR_WHITE, ILI9341_COLOR_BLACK);
+    sprintf(str, "%d - %d            ", angle.angle_x, angle.angle_z);
+    ILI9341_Puts(1, 1, str, &Font_7x10, ILI9341_COLOR_BLACK, ILI9341_COLOR_WHITE);
 
     static bool first_turn = true;
     static angle_three_dims_t last_angle;

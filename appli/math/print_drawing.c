@@ -26,9 +26,9 @@ void print_drawing(drawing_two_dims_t *drawing)
     for(uint16_t i = 0; i < last_drawing.nb_segment; i++)
     {
         ILI9341_DrawLine(   last_drawing.segment[i].p1.x,
-                            last_drawing.segment[i].p1.y,
+                            ILI9341_WIDTH - last_drawing.segment[i].p1.y,
                             last_drawing.segment[i].p2.x,
-                            last_drawing.segment[i].p2.y,
+                            ILI9341_WIDTH - last_drawing.segment[i].p2.y,
                             BACKGROUND_COLOR);
     }
 
@@ -36,9 +36,9 @@ void print_drawing(drawing_two_dims_t *drawing)
     for(uint16_t i = 0; i < drawing->nb_segment; i++)
     {
         ILI9341_DrawLine(   drawing->segment[i].p1.x,
-                            drawing->segment[i].p1.y,
+                            ILI9341_WIDTH - drawing->segment[i].p1.y,
                             drawing->segment[i].p2.x,
-                            drawing->segment[i].p2.y,
+                            ILI9341_WIDTH - drawing->segment[i].p2.y,
                             DRAWING_COLOR);
     }
 
