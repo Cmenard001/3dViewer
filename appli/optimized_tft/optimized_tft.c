@@ -39,19 +39,6 @@ static pixel_t last_pixels_tab[ILI9341_WIDTH][ILI9341_HEIGHT];
  */
 void OPTFT_refresh()
 {
-    /* Set cursor position */
-    ILI9341_SetCursorPosition(0, 0, 0, 0);
-
-    /* Set command for GRAM data */
-    ILI9341_SendCommand(ILI9341_GRAM);
-
-    /* Send everything */
-    ILI9341_CS_RESET();
-    ILI9341_WRX_SET();
-
-    /* Go to 16-bit SPI mode */
-    TM_SPI_SetDataSize(ILI9341_SPI, TM_SPI_DataSize_16b);
-
     /* Send data */
     for (uint16_t x = 0; x <= ILI9341_WIDTH; x++)
     {
@@ -59,11 +46,7 @@ void OPTFT_refresh()
         {
             if (pixels_tab[x][y].color != last_pixels_tab[x][y].color)
             {
-                uint8_t datas[2];
-                datas[1] = HIGHINT(pixels_tab[x][y].color);
-                datas[0] = LOWINT(pixels_tab[x][y].color);
-                SPI_WriteMultiNoRegister(ILI9341_SPI, datas, 1);
-                last_pixels_tab[x][y].color = pixels_tab[x][y].color;
+                ILI9341_DrawPixel(x, y, pixels_tab[x][y].color)
             }
         }
     }
