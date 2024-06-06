@@ -1,12 +1,13 @@
 #include "print_drawing.h"
 
-#include "../../lib/bsp/tft_ili9341/stm32f1_ili9341.h"
 
 #include <malloc.h>
 
 // #define OPTIMIZE_TFT
 #ifdef OPTIMIZE_TFT
     #include "../optimized_tft/optimized_tft.h"
+#else
+    #include "../../lib/bsp/tft_ili9341/stm32f1_ili9341.h"
 #endif
 
 #define BACKGROUND_COLOR ILI9341_COLOR_WHITE
@@ -18,12 +19,11 @@
  */
 void draw_init()
 {
+#ifdef OPTIMIZE_TFT
+    OPTFT_init();
+#else
     ILI9341_Init();
     ILI9341_Rotate(3);
-#ifdef OPTIMIZE_TFT
-    OPTFT_Fill(0, 0, ILI9341_WIDTH, ILI9341_HEIGHT, BACKGROUND_COLOR);
-    OPTFT_refresh();
-#else
     ILI9341_Fill(BACKGROUND_COLOR);
 #endif
 }
@@ -40,7 +40,7 @@ void print_drawing(drawing_two_dims_t *drawing)
                         last_drawing.segment[i].p1.y,
                         last_drawing.segment[i].p2.x,
                         last_drawing.segment[i].p2.y,
-                        BACKGROUND_COLOR);
+                        PIXEL_OFF);
 #else
         ILI9341_DrawLine(   last_drawing.segment[i].p1.x,
                             ILI9341_WIDTH - last_drawing.segment[i].p1.y,
@@ -58,7 +58,7 @@ void print_drawing(drawing_two_dims_t *drawing)
                         drawing->segment[i].p1.y,
                         drawing->segment[i].p2.x,
                         drawing->segment[i].p2.y,
-                        DRAWING_COLOR);
+                        PIXEL_ON);
 #else
         ILI9341_DrawLine(   drawing->segment[i].p1.x,
                             ILI9341_WIDTH - drawing->segment[i].p1.y,

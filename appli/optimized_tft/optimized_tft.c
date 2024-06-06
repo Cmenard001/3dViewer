@@ -17,6 +17,8 @@
 #include "../../lib/bsp/stm32f1_gpio.h"
 
 #include <stdint.h>
+#include <malloc.h>
+#include <stdbool.h>
 
 #define HIGHINT(x)				((uint8_t)(((x) >> 8) & 0xFF))
 #define LOWINT(x)				((uint8_t)((x) & 0xFF))
@@ -25,13 +27,53 @@
 #define ILI9341_CS_RESET()			HAL_GPIO_WritePin(ILI9341_CS_PORT, ILI9341_CS_PIN, 0)
 #define ILI9341_WRX_SET()			HAL_GPIO_WritePin(ILI9341_WRX_PORT, ILI9341_WRX_PIN, 1)
 
-typedef struct
-{
-    uint16_t color;
-} pixel_t;
+#define BACKGROUND_COLOR ILI9341_COLOR_WHITE
+#define DRAWING_COLOR ILI9341_COLOR_BLACK
 
-static pixel_t pixels_tab[ILI9341_WIDTH][ILI9341_HEIGHT];
-static pixel_t last_pixels_tab[ILI9341_WIDTH][ILI9341_HEIGHT];
+#define NB_BITS_PER_BYTE 8
+
+static int8_t pixels[ILI9341_WIDTH * ILI9341_HEIGHT / NB_BITS_PER_BYTE];
+static int8_t last_pixels[ILI9341_WIDTH * ILI9341_HEIGHT / NB_BITS_PER_BYTE];
+
+
+static inline bool get_bit(int8_t* tab, int8_t index);
+static inline bool get_bit(int8_t* tab, int8_t index)
+{
+    unsigned int kn,in;
+    kn=(index+NB_BITS_PER_BYTE-1)/NB_BITS_PER_BYTE;
+    in=(index-1)%NB_BITS_PER_BYTE;
+    return (1 & (tab[kn] >> in));
+}
+
+static inline void set_bit(int8_t* tab, int8_t index, bool val);
+static inline void set_bit(int8_t* tab, int8_t index, bool val)
+{
+    unsigned int kn,in;
+    kn=(index+NB_BITS_PER_BYTE-1)/NB_BITS_PER_BYTE;
+    in=(index-1)%NB_BITS_PER_BYTE;
+    if (val)
+    {
+        tab[kn]= tab[kn] | (1 << in);
+    }
+    else
+    {
+        tab[kn]= tab[kn] & ~(1 << in);
+    }
+}
+
+void OPTFT_init()
+{
+    ILI9341_Init();
+    ILI9341_Rotate(3);
+    for (uint16_t x = 0; x <= ILI9341_WIDTH; x++)
+    {
+        for (uint16_t y = 0; y <= ILI9341_HEIGHT; y++)
+        {
+            OPTFT_DrawPixel(x, y, PIXEL_OFF);
+        }
+    }
+    OPTFT_refresh();
+}
 
 /**
  * @brief  Refresh the screen with the new pixels stored in the pixels_tab
@@ -57,13 +99,16 @@ void OPTFT_refresh()
     {
         for (uint16_t y = 0; y <= ILI9341_HEIGHT; y++)
         {
-            if (pixels_tab[x][y].color != last_pixels_tab[x][y].color)
+            pixel_state_t pixel_state = get_bit(pixels, x + y * ILI9341_WIDTH);
+            pixel_state_t last_pixel_state = get_bit(last_pixels, x + y * ILI9341_WIDTH);
+            if (pixel_state != last_pixel_state)
             {
                 uint8_t datas[2];
-                datas[1] = HIGHINT(pixels_tab[x][y].color);
-                datas[0] = LOWINT(pixels_tab[x][y].color);
+                uint8_t new_color = (pixel_state == PIXEL_ON) ? DRAWING_COLOR : BACKGROUND_COLOR;
+                datas[1] = HIGHINT(new_color);
+                datas[0] = LOWINT(new_color);
                 SPI_WriteMultiNoRegister(ILI9341_SPI, datas, 1);
-                last_pixels_tab[x][y].color = pixels_tab[x][y].color;
+                set_bit(last_pixels, x + y * ILI9341_WIDTH, pixel_state);
             }
         }
     }
@@ -73,30 +118,30 @@ void OPTFT_refresh()
  * @brief  Draws single pixel to LCD
  * @param  x: X position for pixel
  * @param  y: Y position for pixel
- * @param  color: Color of pixel
+ * @param  pixel_state: New state of pixel
  * @retval None
  */
-inline void OPTFT_DrawPixel(uint16_t x, uint16_t y, uint16_t color)
+inline void OPTFT_DrawPixel(uint16_t x, uint16_t y, pixel_state_t pixel_state)
 {
-	pixels_tab[x][y].color = color;
+    set_bit(pixels, x + y * ILI9341_WIDTH, true);
 }
 
 /**
- * @brief  Fills chosen area with a color
+ * @brief  Fills chosen area with a pixel state
  * @param  x0: X coordinate of top left point
  * @param  y0: Y coordinate of top left point
  * @param  x1: X coordinate of bottom right point
  * @param  y1: Y coordinate of bottom right point
- * @param  color: Color to be used in fill
+ * @param  pixel_state: state to be used in fill
  * @retval None
  */
-void OPTFT_Fill(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)
+void OPTFT_Fill(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, pixel_state_t pixel_state)
 {
     for (uint16_t x = x0; x <= x1; x++)
     {
         for (uint16_t y = y0; y <= y1; y++)
         {
-            OPTFT_DrawPixel(x, y, color);
+            OPTFT_DrawPixel(x, y, pixel_state);
         }
     }
 }
@@ -107,10 +152,10 @@ void OPTFT_Fill(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t col
  * @param  y0: Y coordinate of starting point
  * @param  x1: X coordinate of ending point
  * @param  y1: Y coordinate of ending point
- * @param  color: Line color
+ * @param  pixel_state: Line pixel state
  * @retval None
  */
-void OPTFT_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color)
+void OPTFT_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, pixel_state_t pixel_state)
 {
     //WindowMax();
     int   dx = 0, dy = 0;
@@ -123,8 +168,8 @@ void OPTFT_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t
     dy = y1-y0;
 
     if (dx == 0) {        /* vertical line */
-        if (y1 > y0) OPTFT_Fill(x0, y0, x0, y1, color);
-        else OPTFT_Fill(x0, y1, x0, y0, color);
+        if (y1 > y0) OPTFT_Fill(x0, y0, x0, y1, pixel_state);
+        else OPTFT_Fill(x0, y1, x0, y0, pixel_state);
         return;
     }
 
@@ -134,8 +179,8 @@ void OPTFT_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t
         dx_sym = -1;
     }
     if (dy == 0) {        /* horizontal line */
-        if (x1 > x0) OPTFT_Fill(x0, y0, x1, y0, color);
-        else  OPTFT_Fill(x1, y0, x0, y0, color);
+        if (x1 > x0) OPTFT_Fill(x0, y0, x1, y0, pixel_state);
+        else  OPTFT_Fill(x1, y0, x0, y0, pixel_state);
         return;
     }
 
@@ -155,7 +200,7 @@ void OPTFT_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t
         di = dy_x2 - dx;
         while (x0 != x1) {
 
-        	OPTFT_DrawPixel(x0, y0, color);
+        	OPTFT_DrawPixel(x0, y0, pixel_state);
             x0 += dx_sym;
             if (di<0) {
                 di += dy_x2;
@@ -164,11 +209,11 @@ void OPTFT_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t
                 y0 += dy_sym;
             }
         }
-        OPTFT_DrawPixel(x0, y0, color);
+        OPTFT_DrawPixel(x0, y0, pixel_state);
     } else {
         di = dx_x2 - dy;
         while (y0 != y1) {
-        	OPTFT_DrawPixel(x0, y0, color);
+        	OPTFT_DrawPixel(x0, y0, pixel_state);
             y0 += dy_sym;
             if (di < 0) {
                 di += dx_x2;
@@ -177,7 +222,7 @@ void OPTFT_DrawLine(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t
                 x0 += dx_sym;
             }
         }
-        OPTFT_DrawPixel(x0, y0, color);
+        OPTFT_DrawPixel(x0, y0, pixel_state);
     }
     return;
 }
