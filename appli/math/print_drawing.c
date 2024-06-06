@@ -4,6 +4,11 @@
 
 #include <malloc.h>
 
+// #define OPTIMIZE_TFT
+#ifdef OPTIMIZE_TFT
+    #include "../optimized_tft/optimized_tft.h"
+#endif
+
 #define BACKGROUND_COLOR ILI9341_COLOR_WHITE
 #define DRAWING_COLOR ILI9341_COLOR_BLACK
 
@@ -15,7 +20,12 @@ void draw_init()
 {
     ILI9341_Init();
     ILI9341_Rotate(3);
+#ifdef OPTIMIZE_TFT
+    OPTFT_Fill(0, 0, ILI9341_WIDTH, ILI9341_HEIGHT, BACKGROUND_COLOR);
+    OPTFT_refresh();
+#else
     ILI9341_Fill(BACKGROUND_COLOR);
+#endif
 }
 
 void print_drawing(drawing_two_dims_t *drawing)
@@ -25,22 +35,43 @@ void print_drawing(drawing_two_dims_t *drawing)
     // on efface, l'ancien dessin
     for(uint16_t i = 0; i < last_drawing.nb_segment; i++)
     {
+#ifdef OPTIMIZE_TFT
+        OPTFT_DrawLine( last_drawing.segment[i].p1.x,
+                        last_drawing.segment[i].p1.y,
+                        last_drawing.segment[i].p2.x,
+                        last_drawing.segment[i].p2.y,
+                        BACKGROUND_COLOR);
+#else
         ILI9341_DrawLine(   last_drawing.segment[i].p1.x,
                             last_drawing.segment[i].p1.y,
                             last_drawing.segment[i].p2.x,
                             last_drawing.segment[i].p2.y,
                             BACKGROUND_COLOR);
+#endif
     }
 
     // on dessine le nouveau dessin
     for(uint16_t i = 0; i < drawing->nb_segment; i++)
     {
+#ifdef OPTIMIZE_TFT
+        OPTFT_DrawLine( drawing->segment[i].p1.x,
+                        drawing->segment[i].p1.y,
+                        drawing->segment[i].p2.x,
+                        drawing->segment[i].p2.y,
+                        DRAWING_COLOR);
+#else
         ILI9341_DrawLine(   drawing->segment[i].p1.x,
                             drawing->segment[i].p1.y,
                             drawing->segment[i].p2.x,
                             drawing->segment[i].p2.y,
                             DRAWING_COLOR);
+#endif
     }
+
+#ifdef OPTIMIZE_TFT
+    // on met à jour l'écran
+    OPTFT_refresh();
+#endif
 
     last_drawing.nb_segment = drawing->nb_segment;
     if (last_drawing.segment != NULL)
