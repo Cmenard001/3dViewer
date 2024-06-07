@@ -46,7 +46,7 @@ void OPTFT_refresh()
         {
             if (pixels_tab[x][y].color != last_pixels_tab[x][y].color)
             {
-                ILI9341_DrawPixel(x, y, pixels_tab[x][y].color)
+                ILI9341_DrawPixel(x, y, pixels_tab[x][y].color);
             }
         }
     }
