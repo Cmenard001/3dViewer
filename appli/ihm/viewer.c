@@ -6,7 +6,7 @@
 
 #define DEFAULT_ANGLE (PI_INT/64)
 
-static polar_coord_three_dims_t viewer_coord;
+static polar_coord_three_dims_t viewer_coord = (polar_coord_three_dims_t){0, 0};
 
 void button_init()
 {
