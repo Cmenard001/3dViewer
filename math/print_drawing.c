@@ -4,7 +4,7 @@
 
 #include <malloc.h>
 
-// #define OPTIMIZE_TFT
+#define OPTIMIZE_TFT
 #ifdef OPTIMIZE_TFT
     #include "../optimized_tft/optimized_tft.h"
 #endif
@@ -20,8 +20,7 @@ void draw_init()
 {
     ILI9341_init();
 #ifdef OPTIMIZE_TFT
-    OPTFT_Fill(0, 0, ILI9341_WIDTH, ILI9341_HEIGHT, BACKGROUND_COLOR);
-    OPTFT_refresh();
+    OPTFT_init(BACKGROUND_COLOR);
 #else
     ILI9341_fill(BACKGROUND_COLOR);
 #endif

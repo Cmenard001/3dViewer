@@ -19,14 +19,14 @@
 
 #include <stdint.h>
 
-#define COMPRESS_COLOR(color)		((compressed_color_t)(((color >> 8) & 0xF8) | ((color >> 5) & 0x07)))
-#define DECOMPRESS_COLOR(color)		((uint16_t)(((color & 0xF8) << 8) | ((color & 0x07) << 5)))
+#define COMPRESS_COLOR(color)		((uint8_t)((color > 0x7FFF) ? 0xFF : 0x00))
+#define DECOMPRESS_COLOR(color)		((uint16_t)((color > 0x7F) ? 0xFFFF : 0x0000))
 
 #define SIZE_TAB (2*ILI9341_WIDTH*ILI9341_HEIGHT)
 #define CCM_RAM_SIZE 65535
 #define EXCEEDING_CCM_RAM_SIZE (SIZE_TAB-CCM_RAM_SIZE)
 
-#define INDEX(x, y, pixel_tab) (pixel_tab*ILI9341_HEIGHT*ILI9341_WIDTH + x*ILI9341_HEIGHT + y)
+#define INDEX(x, y, pixel_tab) (pixel_tab*ILI9341_HEIGHT*ILI9341_WIDTH + x*ILI9341_WIDTH + y)
 
 typedef enum
 {
@@ -51,6 +51,7 @@ compressed_color_t exceeding_ccm_ram[(EXCEEDING_CCM_RAM_SIZE)/sizeof(compressed_
 compressed_color_t get_pixel(uint16_t x, uint16_t y, pixels_tab_e pixel_tab)
 {
     uint32_t index = INDEX(x, y, pixel_tab);
+    assert(index < SIZE_TAB);
     if (index < CCM_RAM_SIZE)
     {
         return ccm_ram[index];
@@ -71,6 +72,7 @@ compressed_color_t get_pixel(uint16_t x, uint16_t y, pixels_tab_e pixel_tab)
 void set_pixel(uint16_t x, uint16_t y, pixels_tab_e pixel_tab, compressed_color_t color)
 {
     uint32_t index = INDEX(x, y, pixel_tab);
+    assert(index < SIZE_TAB);
     if (index < CCM_RAM_SIZE)
     {
         ccm_ram[index] = color;
@@ -81,6 +83,22 @@ void set_pixel(uint16_t x, uint16_t y, pixels_tab_e pixel_tab, compressed_color_
     }
 }
 
+void OPTFT_init(uint16_t background_color)
+{
+    // On initialise l'écran
+    ILI9341_init();
+    // On remplit l'écran avec la couleur de fond
+    ILI9341_fill(background_color);
+    // On initialise les tableaux de pixels
+    for (uint16_t x = 0; x < ILI9341_WIDTH; x++)
+    {
+        for (uint16_t y = 0; y < ILI9341_HEIGHT; y++)
+        {
+            set_pixel(x, y, PIXELS_TAB, COMPRESS_COLOR(background_color));
+            set_pixel(x, y, LAST_PIXELS_TAB, COMPRESS_COLOR(background_color));
+        }
+    }
+}
 
 /**
  * @brief  Refresh the screen with the new pixels stored in the pixels_tab
@@ -89,9 +107,9 @@ void set_pixel(uint16_t x, uint16_t y, pixels_tab_e pixel_tab, compressed_color_
 void OPTFT_refresh()
 {
     /* Send data */
-    for (uint16_t x = 0; x <= ILI9341_WIDTH; x++)
+    for (uint16_t x = 0; x < ILI9341_WIDTH; x++)
     {
-        for (uint16_t y = 0; y <= ILI9341_HEIGHT; y++)
+        for (uint16_t y = 0; y < ILI9341_HEIGHT; y++)
         {
             if (get_pixel(x, y, PIXELS_TAB) != get_pixel(x, y, LAST_PIXELS_TAB))
             {

@@ -4,6 +4,13 @@
 #include <stdint.h>
 
 /**
+ * @brief Fonction d'initialisation de l'écran optimisé
+ *
+ * @param background_color Couleur de fond de l'écran
+ */
+void OPTFT_init(uint16_t background_color);
+
+/**
  * @brief Fonction de rafraichissement de l'écran
  *
  */
