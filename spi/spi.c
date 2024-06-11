@@ -84,7 +84,7 @@
 		SPI_InitStructure[1].SPI_CPOL = SPI_CPOL_Low;
 		SPI_InitStructure[1].SPI_CPHA = SPI_CPHA_1Edge;
 		SPI_InitStructure[1].SPI_NSS = SPI_NSS_Soft;
-		SPI_InitStructure[1].SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_256;
+		SPI_InitStructure[1].SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
 		SPI_InitStructure[1].SPI_CRCPolynomial = 7;
 
 		#ifdef SPI1_ON_DMA

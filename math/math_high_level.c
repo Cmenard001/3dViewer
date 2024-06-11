@@ -22,7 +22,7 @@ void math_init()
 
 void math_process_main()
 {
-    drawing_three_dims_t drawing;
+    static drawing_three_dims_t drawing = (drawing_three_dims_t){.nb_segment = 0, .segment = NULL};
     // on récupère le dessin à dessiner
     bool drawing_changed = is_drawing_changed();
     if (drawing_changed)
@@ -41,11 +41,11 @@ void math_process_main()
 
     static bool first_turn = true;
     static angle_three_dims_t last_angle;
-    if (   last_angle.angle_x != angle.angle_x
-        || last_angle.angle_y != angle.angle_y
-        || last_angle.angle_z != angle.angle_z
-        || drawing_changed
-        || first_turn)
+    //if (   last_angle.angle_x != angle.angle_x
+    //    || last_angle.angle_y != angle.angle_y
+    //    || last_angle.angle_z != angle.angle_z
+    //    || drawing_changed
+    //    || first_turn)
     {
         first_turn = false;
         last_angle = angle;
@@ -53,7 +53,7 @@ void math_process_main()
         rotate(&drawing, angle);
 
         // on projette le dessin sur un plan
-        drawing_two_dims_t drawing_2d;
+        static drawing_two_dims_t drawing_2d = (drawing_two_dims_t){.nb_segment = 0, .segment = NULL};
         projection_orthogonal(&drawing, &drawing_2d);
 
         // on redimensionne le dessin pour qu'il apparaisse à la bonne taille et à la bonne place
@@ -61,8 +61,5 @@ void math_process_main()
 
         // on dessine le dessin
         print_drawing(&drawing_2d);
-
-        // on libère la mémoire
-        free(drawing_2d.segment);
     }
 }

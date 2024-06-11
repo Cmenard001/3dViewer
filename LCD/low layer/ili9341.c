@@ -114,7 +114,7 @@ void ILI9341_init(){
 }
 
 void ILI9341_setConfig(void){
-	SPI_setBaudRate(LCD_SPI, SPI_BaudRatePrescaler_256);
+	SPI_setBaudRate(LCD_SPI, SPI_BaudRatePrescaler_2);
 }
 
 void ILI9341_displayOn(void) {

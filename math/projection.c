@@ -7,8 +7,20 @@
 
 void projection_orthogonal(drawing_three_dims_t *drawing, drawing_two_dims_t *drawing_2d)
 {
-    drawing_2d->nb_segment = drawing->nb_segment;
-    drawing_2d->segment = (segment_two_dims_t*)malloc(drawing->nb_segment * sizeof(segment_two_dims_t));
+    if (drawing_2d->segment == NULL)
+    {
+        drawing_2d->nb_segment = drawing->nb_segment;
+        // on alloue la mémoire pour les segments
+        drawing_2d->segment = (segment_two_dims_t*)malloc(drawing->nb_segment * sizeof(segment_two_dims_t));
+    }
+    else if (drawing_2d->nb_segment != drawing->nb_segment)
+    {
+        // on désalloue la mémoire
+        free(drawing_2d->segment);
+        // on réalloue la mémoire pour les segments
+        drawing_2d->nb_segment = drawing->nb_segment;
+        drawing_2d->segment = (segment_two_dims_t*)malloc(drawing->nb_segment * sizeof(segment_two_dims_t));
+    }
     // on garde uniquement les coordonnées x et z des segments
     for(uint16_t i = 0; i < drawing_2d->nb_segment; i++)
     {

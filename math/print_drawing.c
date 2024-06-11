@@ -10,7 +10,7 @@
 #endif
 
 #define BACKGROUND_COLOR ILI9341_COLOR_GREEN
-#define DRAWING_COLOR ILI9341_COLOR_RED
+#define DRAWING_COLOR ILI9341_COLOR_BLACK
 
 /**
  * @brief Last drawing printed
@@ -41,16 +41,18 @@ void print_drawing(drawing_two_dims_t *drawing)
                         last_drawing.segment[i].p2.y,
                         BACKGROUND_COLOR);
 #else
+/*
         ILI9341_drawLine(   last_drawing.segment[i].p1.x,
                             ILI9341_WIDTH - last_drawing.segment[i].p1.y,
                             last_drawing.segment[i].p2.x,
                             ILI9341_WIDTH - last_drawing.segment[i].p2.y,
                             BACKGROUND_COLOR);
+*/
 #endif
     }
 
     // on dessine le nouveau dessin
-    for(uint16_t i = 0; i < drawing->nb_segment; i++)
+    for(uint16_t i = 0; i < 1/*drawing->nb_segment*/; i++)
     {
 #ifdef OPTIMIZE_TFT
         OPTFT_DrawLine( drawing->segment[i].p1.x,
@@ -60,9 +62,9 @@ void print_drawing(drawing_two_dims_t *drawing)
                         DRAWING_COLOR);
 #else
         ILI9341_drawLine(   drawing->segment[i].p1.x,
-                            /*ILI9341_WIDTH - */drawing->segment[i].p1.y,
+                            ILI9341_WIDTH - drawing->segment[i].p1.y,
                             drawing->segment[i].p2.x,
-                            /*ILI9341_WIDTH - */drawing->segment[i].p2.y,
+                            ILI9341_WIDTH - drawing->segment[i].p2.y,
                             DRAWING_COLOR);
 
 #endif

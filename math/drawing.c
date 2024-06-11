@@ -10,14 +10,14 @@
  * @brief Simple cube drawing
  *
  */
-drawing_three_dims_t cube =
+const drawing_three_dims_t cube =
 {
     .segment = (segment_three_dims_t[])
     {
         {
             .p1 = { .x = 1000, .y = -1000, .z = +1000 },
             .p2 = { .x = -1000, .y = -1000, .z = 1000 }
-        },/*
+        },
         {
             .p1 = { .x = 1000, .y = 1000, .z = 1000 },
             .p2 = { .x = -1000, .y = 1000, .z = 1000 }
@@ -63,16 +63,16 @@ drawing_three_dims_t cube =
         {
             .p1 = { .x = 1000, .y = 1000, .z = 1000 },
             .p2 = { .x = 1000, .y = 1000, .z = -1000 }
-        }*/
+        }
     },
-    .nb_segment = 1//2
+    .nb_segment = 12
 };
 
 /**
  * @brief House drawing
  *
  */
-drawing_three_dims_t house =
+const drawing_three_dims_t house =
 {
     .segment = (segment_three_dims_t[])
     {
@@ -282,7 +282,7 @@ void increment_current_drawing()
  */
 void get_drawing(drawing_type_t drawing_type, drawing_three_dims_t *drawing)
 {
-    static drawing_three_dims_t *original_drawing;
+    drawing_three_dims_t *original_drawing;
     switch(drawing_type)
     {
         case DRAWING_CUBE:
@@ -299,8 +299,9 @@ void get_drawing(drawing_type_t drawing_type, drawing_three_dims_t *drawing)
 
     if (drawing->segment == NULL)
     {
+        drawing->nb_segment = original_drawing->nb_segment;
         // on alloue la mémoire pour le premier dessin
-        drawing->segment = (segment_three_dims_t *)malloc(drawing->nb_segment * sizeof(segment_three_dims_t));
+        drawing->segment = (segment_three_dims_t *)malloc(original_drawing->nb_segment * sizeof(segment_three_dims_t));
     }
     else if (drawing->nb_segment != original_drawing->nb_segment)
     {
