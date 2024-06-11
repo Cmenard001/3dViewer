@@ -1,6 +1,13 @@
 {
     "files.encoding": "iso88591",
     "files.associations": {
-        "stdint.h": "c"
+        "stm32f4xx_spi.h": "c",
+        "qs_ports.h": "c",
+        "ili9341.h": "c",
+        "stm32f4xx_gpio.h": "c",
+        "stm32f4xx.h": "c",
+        "config_use.h": "c",
+        "ports.h": "c",
+        "viewer.h": "c"
     }
 }

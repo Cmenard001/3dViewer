@@ -6,8 +6,7 @@ Debug/**
 .settings/**
 
 # VScode configuration files
-.vscode/c_cpp_properties.json
-.vscode/settings.json
+.vscode/**
 
 # Prerequisites
 *.d
