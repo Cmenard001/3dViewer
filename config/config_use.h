@@ -79,7 +79,7 @@
 /* Réglages LCD */
 	#define LCD_SPI SPI2
 	#define LCD_TOUCH_SPI SPI2
-	#define USE_LCD_DMA
+//	#define USE_LCD_DMA
 	#define USE_IRQ_TOUCH_VALIDATION
 // #endif
 

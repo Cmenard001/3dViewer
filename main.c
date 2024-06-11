@@ -43,10 +43,7 @@ int main (void)
 
 	while(1)
 	{
-		static uint16_t i = 0;
-		i = (i + 1) % 240;
-		ILI9341_drawLine(i, 50, 200, 120, ILI9341_COLOR_RED);
-		// viewer_process_main();
+		viewer_process_main();
 		math_process_main();
 	}
 

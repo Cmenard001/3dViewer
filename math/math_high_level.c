@@ -39,15 +39,12 @@ void math_process_main()
                                                     .angle_z = (polar_coord_three_dims.alpha)};
 
 
-    static bool first_turn = true;
     static angle_three_dims_t last_angle;
-    //if (   last_angle.angle_x != angle.angle_x
-    //    || last_angle.angle_y != angle.angle_y
-    //    || last_angle.angle_z != angle.angle_z
-    //    || drawing_changed
-    //    || first_turn)
+    if (   last_angle.angle_x != angle.angle_x
+        || last_angle.angle_y != angle.angle_y
+        || last_angle.angle_z != angle.angle_z
+        || drawing_changed)
     {
-        first_turn = false;
         last_angle = angle;
         // on tourne le dessin dans l'orientation souhaitée
         rotate(&drawing, angle);
