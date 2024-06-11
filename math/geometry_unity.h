@@ -15,6 +15,10 @@ typedef uint16_t angle_t;
  */
 #define PI_INT ((1<<(8*sizeof(angle_t)))/2)
 
+/**
+ * @brief Quantum pour cos et sin. Equivalent à 1
+ *
+ */
 #define QUANTUM 100
 
 

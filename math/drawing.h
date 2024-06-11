@@ -11,25 +11,32 @@ typedef enum
     DRAWING_COUNT
 } drawing_type_t;
 
+/**
+ * @brief Fonction qui retourne si le dessin a changé
+ *
+ * @return true le dessin a changé
+ * @return false le dessin n'a pas changé
+ */
 bool is_drawing_changed();
 
 /**
- * @brief Get a drawing object
- *
- * @param drawing_type drawing you want to get
- */
-void get_drawing(drawing_type_t drawing_type, drawing_three_dims_t *drawing);
-
-/**
- * @brief Increment the current drawing object
+ * @brief Fonction pour incrémenter le dessin courant
  *
  */
 void increment_current_drawing();
 
 /**
+ * @brief Get the drawing object
+ *
+ * @param drawing_type The drawing you want to get
+ * @param drawing The drawing object who will be filled
+ */
+void get_drawing(drawing_type_t drawing_type, drawing_three_dims_t *drawing);
+
+/**
  * @brief Get the current drawing object
  *
- * @param drawing_type drawing you want to get
+ * @param drawing
  */
 void get_current_drawing(drawing_three_dims_t *drawing);
 

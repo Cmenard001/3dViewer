@@ -2,7 +2,7 @@
  * @file optimized_tft.c
  * @author Cyprien Ménard
  * @brief Fichier de gestion de l'affichage optimisé sur l'écran TFT
- * @note Ce fichier est extrêmement inspiré de "stm32f1_ili9341.c"
+ * @note Ce fichier est partiellement inspiré de "stm32f1_ili9341.c"
  * @date 2024-06-06
  *
  * @copyright Copyright (c) 2024

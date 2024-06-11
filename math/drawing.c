@@ -6,6 +6,10 @@
 
 #include "geometry.h"
 
+/**
+ * @brief Simple cube drawing
+ *
+ */
 drawing_three_dims_t cube =
 {
     .segment = (segment_three_dims_t[])
@@ -64,6 +68,10 @@ drawing_three_dims_t cube =
     .nb_segment = 1//2
 };
 
+/**
+ * @brief House drawing
+ *
+ */
 drawing_three_dims_t house =
 {
     .segment = (segment_three_dims_t[])
@@ -238,27 +246,40 @@ drawing_three_dims_t house =
     .nb_segment = 37
 };
 
+// Variable globale à mettre à true si on change le dessin courant
 static bool drawing_has_changed = true;
+// Dessin courant
 static drawing_type_t current_drawing = 0;
 
+/**
+ * @brief Fonction qui retourne si le dessin a changé
+ *
+ * @return true le dessin a changé
+ * @return false le dessin n'a pas changé
+ */
 bool is_drawing_changed()
 {
-    /*
     bool last_drawing_has_changed = drawing_has_changed;
     drawing_has_changed = false;
     return last_drawing_has_changed;
-    */
-   return true;
 }
 
+/**
+ * @brief Fonction pour incrémenter le dessin courant
+ *
+ */
 void increment_current_drawing()
 {
-    /*
     drawing_has_changed = true;
     current_drawing = (current_drawing + 1) % DRAWING_COUNT;
-    */
 }
 
+/**
+ * @brief Get the drawing object
+ *
+ * @param drawing_type The drawing you want to get
+ * @param drawing The drawing object who will be filled
+ */
 void get_drawing(drawing_type_t drawing_type, drawing_three_dims_t *drawing)
 {
     static drawing_three_dims_t *original_drawing;
@@ -297,6 +318,11 @@ void get_drawing(drawing_type_t drawing_type, drawing_three_dims_t *drawing)
     }
 }
 
+/**
+ * @brief Get the current drawing object
+ *
+ * @param drawing
+ */
 void get_current_drawing(drawing_three_dims_t *drawing)
 {
     get_drawing(current_drawing, drawing);
