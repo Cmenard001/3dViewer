@@ -9,7 +9,7 @@
  * @param drawing dessin à redimensionner
  * @param width largeur de la fenêtre
  */
-void resize_drawing(drawing_two_dims_t *drawing, dist_t width);
+void resize_drawing(drawing_three_dims_t *drawing, dist_t width);
 
 
 #endif

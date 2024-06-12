@@ -7,10 +7,16 @@
 #include "geometry.h"
 
 /**
+ * @brief Empty drawing
+ *
+ */
+static drawing_three_dims_t empty_drawing = { .nb_segment = 0, .segment = NULL };
+
+/**
  * @brief Simple cube drawing
  *
  */
-const drawing_three_dims_t cube =
+static drawing_three_dims_t cube =
 {
     .segment = (segment_three_dims_t[])
     {
@@ -72,7 +78,7 @@ const drawing_three_dims_t cube =
  * @brief House drawing
  *
  */
-const drawing_three_dims_t house =
+static drawing_three_dims_t house =
 {
     .segment = (segment_three_dims_t[])
     {
@@ -280,43 +286,21 @@ void increment_current_drawing()
  * @param drawing_type The drawing you want to get
  * @param drawing The drawing object who will be filled
  */
-void get_drawing(drawing_type_t drawing_type, drawing_three_dims_t *drawing)
+drawing_three_dims_t *get_drawing(drawing_type_t drawing_type)
 {
     drawing_three_dims_t *original_drawing;
     switch(drawing_type)
     {
         case DRAWING_CUBE:
-            original_drawing =  &cube;
-            break;
+            return &cube;
 
         case DRAWING_HOUSE:
-            original_drawing = &house;
-            break;
+            return &house;
 
         default:
             break;
     }
-
-    if (drawing->segment == NULL)
-    {
-        drawing->nb_segment = original_drawing->nb_segment;
-        // on alloue la mémoire pour le premier dessin
-        drawing->segment = (segment_three_dims_t *)malloc(original_drawing->nb_segment * sizeof(segment_three_dims_t));
-    }
-    else if (drawing->nb_segment != original_drawing->nb_segment)
-    {
-        // on met à jour le nombre de segments si il a changé
-        drawing->nb_segment = original_drawing->nb_segment;
-        // on désalloue la mémoire
-        free(drawing->segment);
-        // on réalloue la mémoire pour le nouveau dessin
-        drawing->segment = (segment_three_dims_t *)malloc(drawing->nb_segment * sizeof(segment_three_dims_t));
-    }
-    // on copie les segments
-    for (int i = 0; i < drawing->nb_segment; i++)
-    {
-        drawing->segment[i] = original_drawing->segment[i];
-    }
+    return &empty_drawing;
 }
 
 /**
@@ -324,7 +308,7 @@ void get_drawing(drawing_type_t drawing_type, drawing_three_dims_t *drawing)
  *
  * @param drawing
  */
-void get_current_drawing(drawing_three_dims_t *drawing)
+drawing_three_dims_t *get_current_drawing()
 {
-    get_drawing(current_drawing, drawing);
+    return get_drawing(current_drawing);
 }

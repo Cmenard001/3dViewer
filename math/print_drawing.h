@@ -14,7 +14,7 @@ void draw_init();
  *
  * @param drawing dessin à afficher
  */
-void print_drawing(drawing_two_dims_t *drawing);
+void print_drawing(drawing_three_dims_t *drawing);
 
 
 

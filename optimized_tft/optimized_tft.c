@@ -22,23 +22,16 @@
 #define COMPRESS_COLOR(color)		((uint8_t)((color > 0x7FFF) ? 0xFF : 0x00))
 #define DECOMPRESS_COLOR(color)		((uint16_t)((color > 0x7F) ? 0xFFFF : 0x0000))
 
-#define SIZE_TAB (2*ILI9341_WIDTH*ILI9341_HEIGHT)
-#define CCM_RAM_SIZE 65535
-#define EXCEEDING_CCM_RAM_SIZE (SIZE_TAB-CCM_RAM_SIZE)
-
-#define INDEX(x, y, pixel_tab) (pixel_tab*ILI9341_HEIGHT*ILI9341_WIDTH + x*ILI9341_WIDTH + y)
-
 typedef enum
 {
-    LAST_PIXELS_TAB = 0,
-    PIXELS_TAB
+    PIXELS_TAB = 0,
+    LAST_PIXELS_TAB
 } pixels_tab_e;
 
 typedef uint8_t compressed_color_t;
 
-// tableaux à stocker dans la CCM et dans la RAM pour l'excédent
-__attribute__((section(".ccm"))) compressed_color_t ccm_ram[CCM_RAM_SIZE/sizeof(compressed_color_t)];
-compressed_color_t exceeding_ccm_ram[(EXCEEDING_CCM_RAM_SIZE)/sizeof(compressed_color_t)];
+static compressed_color_t pixels[ILI9341_WIDTH][ILI9341_WIDTH];
+static compressed_color_t last_pixels[ILI9341_WIDTH][ILI9341_WIDTH];
 
 /**
  * @brief Accesseur du tableau "magique" de pixels
@@ -50,15 +43,23 @@ compressed_color_t exceeding_ccm_ram[(EXCEEDING_CCM_RAM_SIZE)/sizeof(compressed_
  */
 compressed_color_t get_pixel(uint16_t x, uint16_t y, pixels_tab_e pixel_tab)
 {
-    uint32_t index = INDEX(x, y, pixel_tab);
-    assert(index < SIZE_TAB);
-    if (index < CCM_RAM_SIZE)
+    if (x < 0 || y < 0 || x >= ILI9341_WIDTH || y >= ILI9341_WIDTH)
     {
-        return ccm_ram[index];
+        return 0;
     }
-    else
+    switch (pixel_tab)
     {
-        return exceeding_ccm_ram[index - CCM_RAM_SIZE];
+    case PIXELS_TAB:
+        return pixels[x][y];
+        break;
+
+    case LAST_PIXELS_TAB:
+        return last_pixels[x][y];
+        break;
+
+    default:
+        return 0;
+        break;
     }
 }
 
@@ -71,15 +72,22 @@ compressed_color_t get_pixel(uint16_t x, uint16_t y, pixels_tab_e pixel_tab)
  */
 void set_pixel(uint16_t x, uint16_t y, pixels_tab_e pixel_tab, compressed_color_t color)
 {
-    uint32_t index = INDEX(x, y, pixel_tab);
-    assert(index < SIZE_TAB);
-    if (index < CCM_RAM_SIZE)
+    if (x < 0 || y < 0 || x >= ILI9341_WIDTH || y >= ILI9341_WIDTH)
     {
-        ccm_ram[index] = color;
+        return;
     }
-    else
+    switch (pixel_tab)
     {
-        exceeding_ccm_ram[index - CCM_RAM_SIZE] = color;
+    case PIXELS_TAB:
+        pixels[x][y] = color;
+        break;
+
+    case LAST_PIXELS_TAB:
+        last_pixels[x][y] = color;
+        break;
+
+    default:
+        break;
     }
 }
 
@@ -92,7 +100,7 @@ void OPTFT_init(uint16_t background_color)
     // On initialise les tableaux de pixels
     for (uint16_t x = 0; x < ILI9341_WIDTH; x++)
     {
-        for (uint16_t y = 0; y < ILI9341_HEIGHT; y++)
+        for (uint16_t y = 0; y < ILI9341_WIDTH; y++)
         {
             set_pixel(x, y, PIXELS_TAB, COMPRESS_COLOR(background_color));
             set_pixel(x, y, LAST_PIXELS_TAB, COMPRESS_COLOR(background_color));
@@ -109,7 +117,7 @@ void OPTFT_refresh()
     /* Send data */
     for (uint16_t x = 0; x < ILI9341_WIDTH; x++)
     {
-        for (uint16_t y = 0; y < ILI9341_HEIGHT; y++)
+        for (uint16_t y = 0; y < ILI9341_WIDTH; y++)
         {
             if (get_pixel(x, y, PIXELS_TAB) != get_pixel(x, y, LAST_PIXELS_TAB))
             {

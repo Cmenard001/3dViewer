@@ -16,7 +16,6 @@
 #include "./ihm/viewer.h"
 #include "./spi/ports.h"
 #include "systick.h"
-#include "LCD/low layer/ili9341.h"
 
 volatile uint8_t t_ms = 0;
 

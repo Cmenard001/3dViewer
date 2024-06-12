@@ -87,4 +87,10 @@ typedef struct
 } polar_coord_three_dims_t;
 
 
+#define TWO_D_PROJECT_X x
+#define TWO_D_PROJECT_Y z
+
+#define PROJECT_POINT(point) (point_two_dims_t){.x = point.TWO_D_PROJECT_X, .y = point.TWO_D_PROJECT_Y}
+#define PROJECT_SEGMENT(segment) (segment_two_dims_t){.p1 = PROJECT_POINT(segment.p1), .p2 = PROJECT_POINT(segment.p2)}
+
 #endif
