@@ -65,5 +65,5 @@ uint8_t BUTTON_down_read(void)
 
 uint8_t BUTTON_center_read(void)
 {
-	return !GPIO_ReadInputDataBit(GPIO_BUTTON_CENTER, PIN_BUTTON_CENTER);
+	return GPIO_ReadInputDataBit(GPIO_BUTTON_CENTER, PIN_BUTTON_CENTER);
 }

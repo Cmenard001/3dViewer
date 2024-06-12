@@ -40,10 +40,10 @@ void math_process_main()
 
 
     static angle_three_dims_t last_angle;
-//    if (   last_angle.angle_x != angle.angle_x
-//        || last_angle.angle_y != angle.angle_y
-//        || last_angle.angle_z != angle.angle_z
-//        || drawing_changed)
+    if (   last_angle.angle_x != angle.angle_x
+        || last_angle.angle_y != angle.angle_y
+        || last_angle.angle_z != angle.angle_z
+        || drawing_changed)
     {
         last_angle = angle;
 
