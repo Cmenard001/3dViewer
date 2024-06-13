@@ -29,14 +29,15 @@ void increment_current_drawing();
  * @brief Get the drawing object
  *
  * @param drawing_type The drawing you want to get
- * @param drawing The drawing object who will be filled
+ *
+ * @return drawing_three_dims_t* The drawing object
  */
 drawing_three_dims_t *get_drawing(drawing_type_t drawing_type);
 
 /**
  * @brief Get the current drawing object
  *
- * @param drawing
+ * @return drawing_three_dims_t* The current drawing object
  */
 drawing_three_dims_t *get_current_drawing();
 
