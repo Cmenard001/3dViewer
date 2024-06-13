@@ -18,6 +18,7 @@
 #include "../stm32f4xx/stm32f4xx_gpio.h"
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define COMPRESS_COLOR(color)		((uint8_t)((color > 0x7FFF) ? 0xFF : 0x00))
 #define DECOMPRESS_COLOR(color)		((uint16_t)((color > 0x7F) ? 0xFFFF : 0x0000))
@@ -115,16 +116,60 @@ void OPTFT_init(uint16_t background_color)
 void OPTFT_refresh()
 {
     /* Send data */
-    for (uint16_t x = 0; x < ILI9341_WIDTH; x++)
+    for (uint16_t y = 0; y < ILI9341_WIDTH; y++)
     {
-        for (uint16_t y = 0; y < ILI9341_WIDTH; y++)
+        uint16_t x0 = 0;
+        uint16_t x1 = 0;
+        bool is_line = false;
+        bool end_line = false;
+        compressed_color_t current_line_color = 0;
+        for (uint16_t x = 0; x < ILI9341_WIDTH; x++)
         {
-            if (get_pixel(x, y, PIXELS_TAB) != get_pixel(x, y, LAST_PIXELS_TAB))
+            // On récupère la couleur du pixel actuel
+            compressed_color_t current_pixel_color = get_pixel(x, y, PIXELS_TAB);
+            if (current_pixel_color == 0)
             {
-                ILI9341_drawPixel(x, y, DECOMPRESS_COLOR(get_pixel(x, y, PIXELS_TAB)));
-                // On met à jour le tableau des derniers pixels
-                set_pixel(x, y, LAST_PIXELS_TAB, get_pixel(x, y, PIXELS_TAB));
+            	for(int i = 0;i < 1;i++);
             }
+
+            if (current_pixel_color != get_pixel(x, y, LAST_PIXELS_TAB))
+            {
+                // Le pixel doit être mis à jour
+                x1 = x;
+                if (!is_line)
+                {
+                    // On commence une nouvelle ligne
+                    is_line = true;
+                    current_line_color = current_pixel_color;
+                    x0 = x;
+                }
+                if (current_line_color != current_pixel_color)
+                {
+                    // La couleur du pixel est différente de la couleur de la ligne
+                    // Donc c'est une nouvelle ligne
+                    // On dessine la ligne précédente
+                    ILI9341_drawFilledRectangle(x0, y, x1, y, DECOMPRESS_COLOR(current_line_color));
+                    // On commence une nouvelle ligne
+                    is_line = true;
+                    current_line_color = current_pixel_color;
+                    x0 = x;
+                }
+            }
+            else if(is_line)
+            {
+                // On a fini une ligne
+                // Donc on la dessine
+                ILI9341_drawFilledRectangle(x0, y, x1, y, DECOMPRESS_COLOR(current_line_color));
+                is_line = false;
+            }
+
+            // On met à jour le tableau des derniers pixels
+            set_pixel(x, y, LAST_PIXELS_TAB, current_pixel_color);
+        }
+        // fin de la ligne, on dessine la dernière ligne si besoin
+        if (is_line)
+        {
+            ILI9341_drawFilledRectangle(x0, y, x1, y, DECOMPRESS_COLOR(get_pixel(ILI9341_WIDTH-1, y, PIXELS_TAB)));
         }
     }
 }
